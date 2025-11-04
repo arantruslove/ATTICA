@@ -913,7 +913,10 @@ export function ScreeningChat({
   if (showReasoning) {
     renderedConversation.push(
       <ChatBubble key="reasoning" side="assistant" animate={false}>
-        <LegalReasoningLogs onComplete={handleReasoningComplete} />
+        <LegalReasoningLogs
+          onComplete={handleReasoningComplete}
+          companyName={watchAll.company_name}
+        />
       </ChatBubble>
     );
   }
@@ -1146,7 +1149,13 @@ interface ReasoningStep {
   reasoning: string[];
 }
 
-function LegalReasoningLogs({ onComplete }: { onComplete: () => void }) {
+function LegalReasoningLogs({
+  onComplete,
+  companyName,
+}: {
+  onComplete: () => void;
+  companyName?: string;
+}) {
   const [currentStep, setCurrentStep] = useState(-1);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [isProcessing, setIsProcessing] = useState(true);
@@ -1409,6 +1418,15 @@ function LegalReasoningLogs({ onComplete }: { onComplete: () => void }) {
               Based on our analysis of the Consumer Rights Act 2015, you have a
               strong legal case for obtaining a full refund.
             </p>
+            {companyName && (
+              <div className="mt-4 pt-4 border-t border-green-200 dark:border-green-800">
+                <p className="text-sm text-green-700 dark:text-green-300">
+                  📧 An email will be sent to{" "}
+                  <span className="font-semibold">{companyName}</span> regarding
+                  your claim.
+                </p>
+              </div>
+            )}
           </div>
         </motion.div>
       )}
