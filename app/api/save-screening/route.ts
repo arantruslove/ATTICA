@@ -1,15 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import fs from 'fs';
-import path from 'path';
+import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import fs from "fs";
+import path from "path";
 
 // Initialize Google AI
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(
+  process.env.GOOGLE_GENERATIVE_AI_API_KEY || ""
+);
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('Received data:', body);
+    console.log("Received data:", body);
 
     const {
       eligibility_check,
@@ -53,16 +55,19 @@ Return ONLY the filtered description without any explanations or additional text
         const filteredText = response.text().trim();
 
         // Check if AI returned an error indicator
-        if (filteredText.includes('CANNOT_EXTRACT') || filteredText.includes('ERROR')) {
-          console.log('AI could not process description, using original');
+        if (
+          filteredText.includes("CANNOT_EXTRACT") ||
+          filteredText.includes("ERROR")
+        ) {
+          console.log("AI could not process description, using original");
           filteredDescription = issue_description;
         } else {
           filteredDescription = filteredText;
         }
 
-        console.log('Filtered description:', filteredDescription);
+        console.log("Filtered description:", filteredDescription);
       } catch (aiError) {
-        console.error('AI filtering failed:', aiError);
+        console.error("AI filtering failed:", aiError);
         // Fallback to original description
         filteredDescription = issue_description;
       }
@@ -78,39 +83,39 @@ Return ONLY the filtered description without any explanations or additional text
       purchase_method,
       issue_description,
       issue_description_filtered: filteredDescription,
-      ...otherFields
+      ...otherFields,
     };
 
     // Ensure data directory exists
-    const dataDir = path.join(process.cwd(), 'data');
+    const dataDir = path.join(process.cwd(), "data");
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
 
     // Generate filename with timestamp
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `screening_${timestamp}.json`;
     const filepath = path.join(dataDir, filename);
 
     // Save to file
     fs.writeFileSync(filepath, JSON.stringify(dataToSave, null, 2));
-    console.log('Data saved to:', filepath);
+    console.log("Data saved to:", filepath);
 
     return NextResponse.json({
       success: true,
-      message: 'Screening data saved successfully',
+      message: "Screening data saved successfully",
       filteredDescription,
-      filename
+      filename,
     });
-
   } catch (error) {
-    console.error('Error processing request:', error);
+    console.error("Error processing request:", error);
     return NextResponse.json(
       {
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error occurred'
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
       },
       { status: 500 }
     );
   }
-} 
+}

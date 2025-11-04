@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CalendarIcon, Download } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { fromDate, getLocalTimeZone } from "@internationalized/date";
 import { RainbowButton } from "@/components/magicui/rainbow-button";
@@ -29,6 +30,7 @@ import stepsData from "./steps.json";
 /* -------------------------------------------------------------------------- */
 
 const ScreeningSchema = z.object({
+  company_name: z.string().optional(),
   eligibility_check: z.enum(["yes", "no"]).optional(),
   receive_date: z.date().optional(),
   contract_main: z.enum(["goods", "digital", "service", "mix"]).optional(),
@@ -92,7 +94,7 @@ const createOptionsList = (
 interface BaseStep<T extends keyof ChatFormValues = keyof ChatFormValues> {
   name: T;
   question: string | BotMessageContent;
-  type: "radio" | "date" | "textarea";
+  type: "radio" | "date" | "textarea" | "text";
   options?: { value: string; label: string }[]; // only for radio
 }
 
@@ -488,6 +490,7 @@ interface ScreeningChatProps {
 }
 
 export function ScreeningChat({ onComplete }: ScreeningChatProps) {
+  const [companyNameSubmitted, setCompanyNameSubmitted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
   const [showReasoning, setShowReasoning] = useState(false);
@@ -504,18 +507,27 @@ export function ScreeningChat({ onComplete }: ScreeningChatProps) {
   });
 
   const watchAll = form.watch();
+  const companyName = watchAll.company_name;
+
+  // Handle company name submission
+  const handleCompanyNameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (companyName && companyName.trim() !== "") {
+      setCompanyNameSubmitted(true);
+    }
+  };
 
   // Reset typing completion when step changes
   useEffect(() => {
-    if (currentStep === 0) {
+    if (currentStep === 0 && companyNameSubmitted) {
       // First message: set as complete immediately for input to show
       setCurrentQuestionTypingComplete(true);
       setAnimatedSteps((prev) => new Set(prev.add(0)));
-    } else {
+    } else if (currentStep > 0) {
       // Other messages: reset to false for typewriter effect
       setCurrentQuestionTypingComplete(false);
     }
-  }, [currentStep]);
+  }, [currentStep, companyNameSubmitted]);
 
   // Mark step as animated when typing completes
   const handleTypingComplete = () => {
@@ -775,6 +787,51 @@ export function ScreeningChat({ onComplete }: ScreeningChatProps) {
     );
   }
 
+  // Show company name input view first
+  if (!companyNameSubmitted) {
+    return (
+      <Form {...form}>
+        <form
+          className="w-[600px] px-2 pb-12"
+          onSubmit={handleCompanyNameSubmit}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col gap-6 items-center"
+          >
+            <h2 className="text-2xl font-semibold text-center">
+              What is the name of the company you purchased from?
+            </h2>
+            <div className="flex flex-col gap-4 w-full max-w-md">
+              <FormField
+                control={form.control}
+                name="company_name"
+                render={({ field }) => (
+                  <Input
+                    placeholder="Enter company name..."
+                    className="text-base h-12"
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    autoFocus
+                  />
+                )}
+              />
+              <Button
+                type="submit"
+                className="w-full h-12 text-base"
+                disabled={!companyName || companyName.trim() === ""}
+              >
+                Continue
+              </Button>
+            </div>
+          </motion.div>
+        </form>
+      </Form>
+    );
+  }
+
   return (
     <Form {...form}>
       <form
@@ -819,6 +876,8 @@ function StepInput({
     if (step.type === "radio") return !field.value;
     if (step.type === "date") return !field.value;
     if (step.type === "textarea")
+      return typeof field.value !== "string" || field.value.trim() === "";
+    if (step.type === "text")
       return typeof field.value !== "string" || field.value.trim() === "";
     return true;
   })();
@@ -901,6 +960,20 @@ function StepInput({
         <Textarea
           placeholder="Describe the issue..."
           className="min-h-24 text-base"
+          value={field.value ?? ""}
+          onChange={(e) => field.onChange(e.target.value)}
+        />
+        <div className="flex justify-end w-full">{commonButton}</div>
+      </div>
+    );
+  }
+
+  if (step.type === "text") {
+    return (
+      <div className="flex flex-col !w-72">
+        <Input
+          placeholder="Enter company name..."
+          className="text-base"
           value={field.value ?? ""}
           onChange={(e) => field.onChange(e.target.value)}
         />
