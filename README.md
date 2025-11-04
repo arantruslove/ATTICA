@@ -1,8 +1,8 @@
-# Know Your Rights
+# ATTICA
 
-KnowYourRights is an application that seeks to educate ordinary citizens about their rights in consumer protection law.
+ATTICA is an application that seeks to educate ordinary citizens about their rights in consumer protection law.
 
-![Know Your Rights Application](figs/consumer_facing/legislation_traversal.jpeg)
+![ATTICA Application](figs/consumer_facing/legislation_traversal.jpeg)
 
 ## Overview
 
@@ -67,7 +67,7 @@ The application includes sophisticated data processing capabilities as shown in 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd know-your-rights
+cd ATTICA
 ```
 
 2. Install dependencies:

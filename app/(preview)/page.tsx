@@ -51,14 +51,13 @@ export default function Home() {
           <div className="mb-6 text-center flex flex-col items-center">
             <Image
               src="/logo.webp"
-              alt="Know Your Rights"
+              alt="ATTICA"
               width={100}
               height={100}
             />
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              Know Your{" "}
               <AuroraText className="italic" colors={["#dba502", "#2C5FC9"]}>
-                Rights
+                ATTICA
               </AuroraText>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
