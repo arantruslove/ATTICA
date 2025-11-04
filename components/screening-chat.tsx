@@ -149,6 +149,7 @@ const ScreeningSchema = z.object({
     .enum(["one_off", "hire", "hire_purchase", "transfer"])
     .optional(),
   purchase_method: z.enum(["in_person", "online", "off_premises"]).optional(),
+  purchase_price: z.string().optional(),
   issue_description: z.string().optional(),
 });
 
@@ -273,6 +274,14 @@ const screeningSteps: Step[] = [
       ["in_person", "online", "off_premises"],
       "purchaseMethod"
     ),
+  },
+  {
+    name: "purchase_price",
+    question: {
+      type: "text",
+      content: "What was the purchase price (£)?",
+    },
+    type: "text",
   },
   {
     name: "issue_description",
@@ -1012,6 +1021,13 @@ function StepInput({
     return true;
   })();
 
+  const buttonText =
+    step.name === "purchase_price"
+      ? "Continue"
+      : isProcessingDescription
+      ? "Processing..."
+      : "Process your claim";
+
   const commonButton = (
     <Button
       type="button"
@@ -1019,7 +1035,7 @@ function StepInput({
       onClick={onContinue}
       disabled={isDisabled || isProcessingDescription}
     >
-      {isProcessingDescription ? "Processing..." : "Process your claim"}
+      {buttonText}
     </Button>
   );
 
@@ -1099,11 +1115,16 @@ function StepInput({
   }
 
   if (step.type === "text") {
+    const placeholder =
+      step.name === "purchase_price" ? "£..." : "Enter company name...";
+    const containerWidth = step.name === "purchase_price" ? "!w-22" : "!w-72";
+    const inputClassName =
+      step.name === "purchase_price" ? "text-base text-center" : "text-base";
     return (
-      <div className="flex flex-col !w-72">
+      <div className={`flex flex-col ${containerWidth}`}>
         <Input
-          placeholder="Enter company name..."
-          className="text-base"
+          placeholder={placeholder}
+          className={inputClassName}
           value={field.value ?? ""}
           onChange={(e) => field.onChange(e.target.value)}
         />
