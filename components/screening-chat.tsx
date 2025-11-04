@@ -487,9 +487,13 @@ function ChatBubble({
 
 interface ScreeningChatProps {
   onComplete: (values: ChatFormValues) => void;
+  onCompanyNameViewChange?: (isShowing: boolean) => void;
 }
 
-export function ScreeningChat({ onComplete }: ScreeningChatProps) {
+export function ScreeningChat({
+  onComplete,
+  onCompanyNameViewChange,
+}: ScreeningChatProps) {
   const [companyNameSubmitted, setCompanyNameSubmitted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
@@ -508,6 +512,13 @@ export function ScreeningChat({ onComplete }: ScreeningChatProps) {
 
   const watchAll = form.watch();
   const companyName = watchAll.company_name;
+
+  // Notify parent when company name view changes
+  useEffect(() => {
+    if (onCompanyNameViewChange) {
+      onCompanyNameViewChange(!companyNameSubmitted);
+    }
+  }, [companyNameSubmitted, onCompanyNameViewChange]);
 
   // Handle company name submission
   const handleCompanyNameSubmit = (e: React.FormEvent) => {

@@ -25,6 +25,8 @@ export default function Home() {
 
   const [screeningAnswers, setScreeningAnswers] =
     useState<ChatFormValues | null>(null);
+  const [isShowingCompanyNameView, setIsShowingCompanyNameView] =
+    useState(true);
 
   const screeningComplete = screeningAnswers !== null;
 
@@ -49,43 +51,43 @@ export default function Home() {
           className="flex flex-col mt-24 mb-72 h-full items-center"
         >
           <div className="mb-6 text-center flex flex-col items-center">
-            <Image
-              src="/logo.webp"
-              alt="ATTICA"
-              width={100}
-              height={100}
-            />
+            <Image src="/logo.webp" alt="ATTICA" width={100} height={100} />
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">
               <AuroraText className="italic" colors={["#dba502", "#2C5FC9"]}>
                 ATTICA
               </AuroraText>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Get instant, personalized legal guidance for consumer rights
-              issues. No legal jargon, just clear answers you can understand.
-            </p>
+            {!isShowingCompanyNameView && (
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Get instant, personalized legal guidance for consumer rights
+                issues. No legal jargon, just clear answers you can understand.
+              </p>
+            )}
           </div>
 
           {/* Trust Indicators */}
-          <div className="flex flex-wrap justify-center gap-6 mb-8">
-            {trustIndicators.map((indicator, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center gap-2 text-sm text-muted-foreground"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
-              >
-                <indicator.icon className="w-4 h-4 text-primary" />
-                {indicator.text}
-              </motion.div>
-            ))}
-          </div>
+          {!isShowingCompanyNameView && (
+            <div className="flex flex-wrap justify-center gap-6 mb-8">
+              {trustIndicators.map((indicator, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                >
+                  <indicator.icon className="w-4 h-4 text-primary" />
+                  {indicator.text}
+                </motion.div>
+              ))}
+            </div>
+          )}
 
           <ScreeningChat
             onComplete={(values) => {
               setScreeningAnswers(values);
             }}
+            onCompanyNameViewChange={setIsShowingCompanyNameView}
           />
 
           <div ref={messagesEndRef} />
