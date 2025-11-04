@@ -16,6 +16,13 @@ import { CalendarIcon, Download } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { cn } from "@/lib/utils";
 import { fromDate, getLocalTimeZone } from "@internationalized/date";
 import { RainbowButton } from "@/components/magicui/rainbow-button";
@@ -24,6 +31,23 @@ import { Label } from "@/components/ui/label";
 
 // Import the steps data
 import stepsData from "./steps.json";
+
+/* -------------------------------------------------------------------------- */
+/*                        Mock company list                                   */
+/* -------------------------------------------------------------------------- */
+
+const MOCK_COMPANIES = [
+  "Amazon UK",
+  "Tesco",
+  "John Lewis",
+  "Argos",
+  "Currys",
+  "ASOS",
+  "Next",
+  "Marks & Spencer",
+  "Boots",
+  "IKEA",
+];
 
 /* -------------------------------------------------------------------------- */
 /*                Schema and helper type for React Hook Form                 */
@@ -820,13 +844,21 @@ export function ScreeningChat({
                 control={form.control}
                 name="company_name"
                 render={({ field }) => (
-                  <Input
-                    placeholder="Enter company name..."
-                    className="text-base h-12"
+                  <Select
                     value={field.value ?? ""}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    autoFocus
-                  />
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="w-full h-12 text-base">
+                      <SelectValue placeholder="Select a company..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {MOCK_COMPANIES.map((company) => (
+                        <SelectItem key={company} value={company}>
+                          {company}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               />
               <Button
