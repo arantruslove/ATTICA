@@ -53,9 +53,7 @@ export default function Home() {
           <div className="mb-6 text-center flex flex-col items-center">
             <Image src="/logo.webp" alt="ATTICA" width={100} height={100} />
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              <AuroraText className="italic" colors={["#dba502", "#2C5FC9"]}>
-                ATTICA
-              </AuroraText>
+              <AuroraText colors={["#dba502", "#2C5FC9"]}>ATTICA</AuroraText>
             </h1>
             {!isShowingCompanyNameView && (
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">

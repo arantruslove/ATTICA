@@ -936,7 +936,7 @@ export function ScreeningChat({
             className="flex flex-col gap-6 items-center"
           >
             <h2 className="text-2xl font-semibold text-center">
-              Who do you wish to file a complain against?
+              Who do you wish to file a complaint against?
             </h2>
             <div className="flex flex-col gap-4 w-full max-w-md">
               <FormField
