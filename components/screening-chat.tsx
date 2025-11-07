@@ -1166,8 +1166,8 @@ function LegalReasoningLogs({
 
   const handleDownloadProof = () => {
     const link = document.createElement("a");
-    link.href = "/re_travel_adapter.pdf";
-    link.download = "re_travel_adapter.pdf";
+    link.href = "/faulty_power_bank_claim.pdf";
+    link.download = "faulty_power_bank_claim.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
